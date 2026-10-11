@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     #region inspector
     [SerializeField] private Image _itemImage;
@@ -58,4 +58,25 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
         }
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if(CItemMenuController.Instance == null)
+        {
+            return;
+        }
+
+        CItemMenuController.Instance.SetSlotItem(_slot.SlotIndex, _itemData);
+        CItemMenuController.Instance.IsOverItem = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (CItemMenuController.Instance == null)
+        {
+            return;
+        }
+
+        //CItemMenuController.Instance.SetSlotItem(_slot.SlotIndex, null);
+        CItemMenuController.Instance.IsOverItem = false;
+    }
 }

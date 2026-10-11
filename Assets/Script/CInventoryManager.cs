@@ -134,4 +134,34 @@ public class CInventoryManager : MonoBehaviour
         inst._inventorySlots[index].UpdateSlot(null);
     }
 
+
+	// 책임 분리 원칙을 위해 아래 내용은 분리하는게 좋을 수도 있겠지만 편의상 일단 여기 남겨둡니다.
+    private void Update()
+    {
+		CItemMenuController itemMenu = CItemMenuController.Instance;
+
+
+		if(itemMenu == null)
+		{
+			return;
+		}
+
+        if (Input.GetMouseButtonUp(0))
+        {
+			if (!itemMenu.IsOverItem)
+			{
+				itemMenu.CloseItemMenu();
+			}
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+			if (itemMenu.IsOverItem)
+			{
+				itemMenu.OpenItemMenu();
+			}
+        }
+
+    }
+
 }

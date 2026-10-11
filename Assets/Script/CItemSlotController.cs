@@ -39,6 +39,11 @@ public class CItemSlotController : MonoBehaviour, IDropHandler
         }
 
         item.SetSlot(this);
+
+        if (CItemMenuController.Instance != null)
+        {
+            CItemMenuController.Instance.CloseItemMenu();
+        }
     }
 
 }
