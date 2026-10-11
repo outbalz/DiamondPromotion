@@ -21,6 +21,7 @@ public class CFieldItemController : MonoBehaviour
             }
         }
 
+        InitializeItem();
     }
 
     public void InitializeItem()
@@ -37,6 +38,10 @@ public class CFieldItemController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Do Something
+        if (CInventoryManager.AddToInventory(_dataSO))
+        {
+            Destroy(gameObject);
+        }
+
     }
 }
