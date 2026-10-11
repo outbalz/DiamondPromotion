@@ -6,13 +6,13 @@ public class CInventoryManager : MonoBehaviour
 {
 	#region inspector
 	[SerializeField] private Transform _itemSlotLayout;
-	[SerializeField] private GameObject _itemSlotPrefab;
+	[SerializeField] private CItemSlotController _itemSlotPrefab;
 	[SerializeField] private int _inventorySize = 20;
 	#endregion
 
 	#region private var
 	private CItemDataSO[] _inventory;
-	private GameObject[] _inventorySlots;
+	private CItemSlotController[] _inventorySlots;
 	private static CInventoryManager _instance;
 	#endregion
 
@@ -33,29 +33,102 @@ public class CInventoryManager : MonoBehaviour
 		}
 
 		_inventory = new CItemDataSO[_inventorySize];
-		_inventorySlots = new GameObject[_inventorySize];
+		_inventorySlots = new CItemSlotController[_inventorySize];
 
+		InitializeInventory();
     }
 
-	public static void AddToInventory(CItemDataSO item)
+    private void OnDestroy()
+    {
+        if(_instance == this)
+		{
+			_instance = null;
+		}
+    }
+
+    private void InitializeInventory()
+    {
+		if(_itemSlotPrefab == null)
+		{
+			Debug.LogWarning("Missing _itemSlotPrefab");
+			return;
+		}
+
+
+		for (int i = 0; i < _inventorySize; i++)
+		{
+			CItemSlotController slot = Instantiate(_itemSlotPrefab, _itemSlotLayout);
+
+			if (slot == null)
+			{
+				continue;
+			}
+
+			slot.InitializeSlot(i);
+        }
+    }
+
+    public static bool AddToInventory(CItemDataSO item)
+    {
+        if (_instance == null)
+        {
+            Debug.LogWarning("Missing CInventoryManager Instance");
+            return false;
+        }
+
+        CInventoryManager inst = _instance;
+
+		for (int i = 0; i < inst._inventory.Length; i++)
+		{
+			if (inst._inventory[i] == null)
+			{
+				AddToInventory(item, i);
+				return true;
+			}
+		}
+
+		Debug.LogWarning("Inventory is full");
+		return false;
+    }
+
+    public static void AddToInventory(CItemDataSO item, int index)
 	{
 		if (_instance == null)
 		{
 			Debug.LogWarning("Missing CInventoryManager Instance");
 			return;
 		}
-		//Do something
-	}
 
-	public static void RemoveFromInventory(CItemDataSO item)
+        CInventoryManager inst = _instance;
+
+		if (inst._inventory[index] != null)
+		{
+			Debug.LogWarning("inventory slot is already occupied");
+			return;
+		}
+
+		inst._inventory[index] = item;
+		inst._inventorySlots[index].UpdateSlot(item);
+    }
+
+	public static void RemoveFromInventory(int index)
 	{
 		if (_instance == null)
 		{
 			Debug.LogWarning("Missing CInventoryManager Instance");
 			return;
 		}
-		//Do something
-	}
 
-	
+		CInventoryManager inst = _instance;
+
+        if (inst._inventory[index] == null)
+        {
+            Debug.LogWarning("inventory slot is already empty");
+            return;
+        }
+
+        inst._inventory[index] = null;
+        inst._inventorySlots[index].UpdateSlot(null);
+    }
+
 }
