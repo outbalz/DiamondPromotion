@@ -50,4 +50,12 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
         _itemImage.raycastTarget = true;
     }
 
+    public void SetSlot(CItemSlotController slot)
+    {
+        if(CInventoryManager.AddToInventory(_itemData, slot.SlotIndex))
+        {
+            CInventoryManager.RemoveFromInventory(_slot.SlotIndex);
+        }
+    }
+
 }

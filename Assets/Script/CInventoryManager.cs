@@ -25,6 +25,7 @@ public class CInventoryManager : MonoBehaviour
 		if(_instance != null && _instance != this)
 		{
 			Destroy(gameObject);
+			return;
 		}
 
         else if(_instance == null)
@@ -64,6 +65,7 @@ public class CInventoryManager : MonoBehaviour
 				continue;
 			}
 
+			_inventorySlots[i] = slot;
 			slot.InitializeSlot(i);
         }
     }
@@ -91,24 +93,25 @@ public class CInventoryManager : MonoBehaviour
 		return false;
     }
 
-    public static void AddToInventory(CItemDataSO item, int index)
+    public static bool AddToInventory(CItemDataSO item, int index)
 	{
 		if (_instance == null)
 		{
 			Debug.LogWarning("Missing CInventoryManager Instance");
-			return;
+			return false;
 		}
 
         CInventoryManager inst = _instance;
 
 		if (inst._inventory[index] != null)
 		{
-			Debug.LogWarning("inventory slot is already occupied");
-			return;
+			Debug.Log("inventory slot is already occupied");
+			return false;
 		}
 
 		inst._inventory[index] = item;
 		inst._inventorySlots[index].UpdateSlot(item);
+		return true;
     }
 
 	public static void RemoveFromInventory(int index)

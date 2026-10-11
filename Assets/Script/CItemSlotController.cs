@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CItemSlotController : MonoBehaviour
+public class CItemSlotController : MonoBehaviour, IDropHandler
 {
 	#region inspector
 	[SerializeField] private CDragableItemController _item;
 	#endregion
 
 	#region private var
-	private int _slotIndex;
+	[SerializeField] private int _slotIndex;
     #endregion
 
     #region property
@@ -26,4 +27,18 @@ public class CItemSlotController : MonoBehaviour
     {
         _item.UpdateSlotItem(item);
     }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        GameObject dropedGO = eventData.pointerDrag;
+        CDragableItemController item =  dropedGO.GetComponent<CDragableItemController>();
+
+        if (item == null)
+        {
+            return;
+        }
+
+        item.SetSlot(this);
+    }
+
 }
