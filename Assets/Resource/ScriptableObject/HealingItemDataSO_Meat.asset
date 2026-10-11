@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6adae1212e1cf741b4f4515f4a52dd7, type: 3}
   m_Name: HealingItemDataSO_Meat
   m_EditorClassIdentifier: 
-  _itemName: 
-  _itemSprite: {fileID: 0}
-  _healAmount: 0
+  _itemName: Meat
+  _itemSprite: {fileID: 1171238558, guid: 859c00bcd7c930448aefcad695bd60f2, type: 3}
+  _healAmount: 20

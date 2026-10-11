@@ -58,6 +58,9 @@ public class CItemMenuController : MonoBehaviour
             _instance = this;
         }
 
+
+        gameObject.SetActive(false);
+
     }
 
     private void OnDestroy()

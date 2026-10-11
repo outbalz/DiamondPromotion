@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemName: Apple
   _itemSprite: {fileID: 1901662512, guid: 859c00bcd7c930448aefcad695bd60f2, type: 3}
-  _healAmount: 5
+  _healAmount: 10
