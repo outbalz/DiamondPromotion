@@ -38,7 +38,7 @@ public class CFieldItemController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (CInventoryManager.AddToInventory(_dataSO))
+        if (CInventoryManager.AddToInventory(_dataSO, 1))
         {
             Destroy(gameObject);
         }

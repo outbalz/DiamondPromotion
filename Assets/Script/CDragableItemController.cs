@@ -9,11 +9,22 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
     #region inspector
     [SerializeField] private Image _itemImage;
     [SerializeField] private CItemSlotController _slot;
+    [SerializeField] private Text _amountText;
     #endregion
 
     #region private var
     private CItemDataSO _itemData;
     #endregion
+
+    private void Awake()
+    {
+        if(_itemImage ==  null || _amountText == null)
+        {
+            Debug.LogWarning("Missing UI element");
+            enabled = false;
+            return;
+        }
+    }
 
     public void UpdateSlotItem(CItemDataSO item)
     {
@@ -22,12 +33,15 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
         if (_itemData != null)
         {
             _itemImage.enabled = true;
+            _amountText.enabled = true;
             _itemImage.sprite = _itemData.ItemSprite;
+            _amountText.text = $"{CInventoryManager.GetItemAmount(_slot.SlotIndex)}";
         }
 
         else
         {
             _itemImage.enabled = false;
+            _amountText.enabled = false;
         }
 
     }
@@ -52,7 +66,7 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
 
     public void SetSlot(CItemSlotController slot)
     {
-        if(CInventoryManager.AddToInventory(_itemData, slot.SlotIndex))
+        if(CInventoryManager.AddToInventory(_itemData, CInventoryManager.GetItemAmount(slot.SlotIndex), slot.SlotIndex))
         {
             CInventoryManager.RemoveFromInventory(_slot.SlotIndex);
         }

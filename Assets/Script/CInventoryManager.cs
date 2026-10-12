@@ -1,6 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+
+public class CItemSlotData
+{
+	#region inspctor
+	[SerializeField] private CItemDataSO _itemData;
+	[SerializeField] private int _amount;
+	#endregion
+
+	#region property
+	public CItemDataSO Item => _itemData;
+	public int Amount => _amount;
+	#endregion
+
+	public bool AddToSlot(CItemDataSO item, int amount)
+	{
+		if (item != _itemData)
+		{
+			return false;
+		}
+
+		_amount += amount;
+		return true;
+	}
+
+	public void RemoveAllFormSlot()
+	{
+		_amount = 0;
+	}
+
+	public bool RemoveFormSlot(int amount)
+	{
+		if(_amount - amount < 0)
+		{
+			return false;
+		}
+
+		_amount -= amount;
+		return true;
+	}
+
+	public CItemSlotData(CItemDataSO item, int amount)
+	{
+		_itemData = item;
+		_amount = amount;
+	}
+}
 
 public class CInventoryManager : MonoBehaviour
 {
@@ -11,7 +58,7 @@ public class CInventoryManager : MonoBehaviour
 	#endregion
 
 	#region private var
-	private CItemDataSO[] _inventory;
+	private CItemSlotData[] _inventory;
 	private CItemSlotController[] _inventorySlots;
 	private static CInventoryManager _instance;
 	#endregion
@@ -33,7 +80,7 @@ public class CInventoryManager : MonoBehaviour
 			_instance = this;
 		}
 
-		_inventory = new CItemDataSO[_inventorySize];
+		_inventory = new CItemSlotData[_inventorySize];
 		_inventorySlots = new CItemSlotController[_inventorySize];
 
 		InitializeInventory();
@@ -70,7 +117,7 @@ public class CInventoryManager : MonoBehaviour
         }
     }
 
-    public static bool AddToInventory(CItemDataSO item)
+    public static bool AddToInventory(CItemDataSO item, int amount)
     {
         if (_instance == null)
         {
@@ -82,9 +129,9 @@ public class CInventoryManager : MonoBehaviour
 
 		for (int i = 0; i < inst._inventory.Length; i++)
 		{
-			if (inst._inventory[i] == null)
+			if (inst._inventory[i] == null || inst._inventory[i].Item == item)
 			{
-				AddToInventory(item, i);
+				AddToInventory(item, i, amount);
 				return true;
 			}
 		}
@@ -93,7 +140,7 @@ public class CInventoryManager : MonoBehaviour
 		return false;
     }
 
-    public static bool AddToInventory(CItemDataSO item, int index)
+    public static bool AddToInventory(CItemDataSO item, int index, int amount)
 	{
 		if (_instance == null)
 		{
@@ -103,6 +150,7 @@ public class CInventoryManager : MonoBehaviour
 
         CInventoryManager inst = _instance;
 
+		/*
 		if (inst._inventory[index] != null)
 		{
 			Debug.Log("inventory slot is already occupied");
@@ -110,8 +158,28 @@ public class CInventoryManager : MonoBehaviour
 		}
 
 		inst._inventory[index] = item;
-		inst._inventorySlots[index].UpdateSlot(item);
-		return true;
+		*/
+
+		if(inst._inventory[index] == null)
+		{
+			inst._inventory[index] = new CItemSlotData(item, amount);
+			inst._inventorySlots[index].UpdateSlot(item);
+			return true;
+		}
+
+		if(inst._inventory[index].Item != item && inst._inventory[index].Item != null)
+		{
+			Debug.Log("inventory slot is already occupied");
+			return false;
+		}
+
+		if(inst._inventory[index].AddToSlot(item, amount))
+		{
+			inst._inventorySlots[index].UpdateSlot(item);
+			return true;
+		}
+		
+		return false;
     }
 
 	public static void RemoveFromInventory(int index)
@@ -133,6 +201,26 @@ public class CInventoryManager : MonoBehaviour
         inst._inventory[index] = null;
         inst._inventorySlots[index].UpdateSlot(null);
     }
+
+	public static CItemSlotData GetSlotData(int index)
+	{
+		if(_instance == null)
+		{
+			return null;
+		}
+
+		return _instance._inventory[index];
+	}
+
+	public static int GetItemAmount(int index)
+	{
+		if (_instance == null)
+		{
+			return 0;
+		}
+
+		return _instance._inventory[index].Amount;
+	}
 
 
 	// 책임 분리 원칙을 위해 아래 내용은 분리하는게 좋을 수도 있겠지만 편의상 일단 여기 남겨둡니다.
