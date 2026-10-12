@@ -66,6 +66,11 @@ public class CDragableItemController : MonoBehaviour, IDragHandler, IBeginDragHa
 
     public void SetSlot(CItemSlotController slot)
     {
+        if (_slot == slot)
+        {
+            return;
+        }
+
         if(CInventoryManager.AddToInventory(_itemData, slot.SlotIndex, CInventoryManager.GetItemAmount(_slot.SlotIndex)))
         {
             CInventoryManager.RemoveFromInventory(_slot.SlotIndex);
