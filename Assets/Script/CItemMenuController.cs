@@ -122,7 +122,7 @@ public class CItemMenuController : MonoBehaviour
         }
 
         _item.OnUse(_player);
-        CInventoryManager.RemoveFromInventory(_slotIndex);
+        CInventoryManager.RemoveFromInventory(_slotIndex, 1);
 
     }
 

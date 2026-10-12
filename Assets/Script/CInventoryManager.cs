@@ -33,7 +33,7 @@ public class CItemSlotData
 
 	public bool RemoveFormSlot(int amount)
 	{
-		if(_amount - amount < 0)
+		if(_amount - amount <= 0)
 		{
 			return false;
 		}
@@ -200,6 +200,32 @@ public class CInventoryManager : MonoBehaviour
 
         inst._inventory[index] = null;
         inst._inventorySlots[index].UpdateSlot(null);
+    }
+
+	public static void RemoveFromInventory(int index, int amount)
+	{
+		if (_instance == null)
+		{
+			Debug.LogWarning("Missing CInventoryManager Instance");
+			return;
+		}
+
+		CInventoryManager inst = _instance;
+
+        if (inst._inventory[index] == null)
+        {
+            Debug.LogWarning("inventory slot is already empty");
+            return;
+        }
+
+		if (!inst._inventory[index].RemoveFormSlot(amount))
+		{
+			inst._inventory[index] = null;
+			inst._inventorySlots[index].UpdateSlot(null);
+			return;
+		}
+
+        inst._inventorySlots[index].UpdateSlot(inst._inventory[index].Item);
     }
 
 	public static CItemSlotData GetSlotData(int index)
